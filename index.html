@@ -228,7 +228,7 @@
       <div class="field">
         <label for="modeSelect">O que vamos praticar?</label>
         <select id="modeSelect">
-          <option value="campo">🎯 Campo harmônico — achar as notas 1, 4 e 5</option>
+          <option value="campo">🎯 Grau → nota — achar as notas 1, 4 e 5 (campo harmônico em maior/menor)</option>
           <option value="grau">🔢 Graus — dada a nota, achar o grau (1 a 7)</option>
           <option value="relativa">🔄 Relativos — achar a menor relativa</option>
         </select>
@@ -589,7 +589,9 @@
 
     document.getElementById("progressBar").classList.toggle("hidden", infinite);
 
-    quizModeLabel.textContent = mode === "campo" ? "Campo harmônico (1-4-5)" : mode === "grau" ? "Graus (1-4-5)" : "Notas relativas";
+    var isTonal = scaleKey === "major" || scaleKey === "natural_minor";
+    var degreeExerciseLabel = isTonal ? "Campo harmônico (1-4-5)" : "Graus da escala (1-4-5)";
+    quizModeLabel.textContent = mode === "campo" ? degreeExerciseLabel : mode === "grau" ? "Graus da escala (1-7)" : "Notas relativas";
 
     renderQuestion();
   }
