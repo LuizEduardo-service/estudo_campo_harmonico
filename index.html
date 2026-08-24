@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Treino: Campo Harmônico 1-4-5 e Relativas</title>
+<style>
+  :root{
+    --bg:#0f1220;
+    --card:#1a1f35;
+    --card2:#232a47;
+    --accent:#6ee7b7;
+    --accent2:#60a5fa;
+    --danger:#f87171;
+    --text:#e8e9f3;
+    --muted:#9aa0c3;
+    --radius:16px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:radial-gradient(circle at top left,#1e2245,#0f1220 60%);
+    color:var(--text);
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    display:flex;
+    justify-content:center;
+    padding:20px;
+  }
+  .app{
+    width:100%;
+    max-width:680px;
+  }
+  h1{
+    font-size:1.4rem;
+    text-align:center;
+    margin-bottom:4px;
+  }
+  .subtitle{
+    text-align:center;
+    color:var(--muted);
+    font-size:0.9rem;
+    margin-bottom:20px;
+  }
+  .panel{
+    background:var(--card);
+    border-radius:var(--radius);
+    padding:20px;
+    margin-bottom:16px;
+    box-shadow:0 8px 24px rgba(0,0,0,0.35);
+  }
+  .info-box{
+    background:var(--card2);
+    border-left:3px solid var(--accent2);
+    border-radius:10px;
+    padding:12px 14px;
+    margin-bottom:16px;
+    font-size:0.85rem;
+    color:var(--muted);
+    line-height:1.5;
+  }
+  .info-box strong{color:var(--text);}
+  .info-box p{margin:0 0 8px 0;}
+  .info-box p:last-child{margin-bottom:0;}
+  .config-grid{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:14px;
+  }
+  @media(min-width:520px){
+    .config-grid{grid-template-columns:1fr 1fr;}
+  }
+  .field label{
+    display:block;
+    font-size:0.8rem;
+    color:var(--muted);
+    margin-bottom:6px;
+  }
+  .hint{
+    font-size:0.75rem;
+    color:var(--muted);
+    margin-top:5px;
+    line-height:1.4;
+  }
+  select, button{
+    font-family:inherit;
+  }
+  select{
+    width:100%;
+    padding:10px 12px;
+    border-radius:10px;
+    border:1px solid #3a3f66;
+    background:var(--card2);
+    color:var(--text);
+    font-size:0.95rem;
+  }
+  .btn{
+    border:none;
+    border-radius:12px;
+    padding:12px 18px;
+    font-size:1rem;
+    font-weight:600;
+    cursor:pointer;
+    transition:transform .1s, opacity .2s;
+  }
+  .btn:active{transform:scale(0.97);}
+  .btn-primary{
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    color:#0f1220;
+    width:100%;
+    margin-top:8px;
+  }
+  .btn-secondary{
+    background:var(--card2);
+    color:var(--text);
+    border:1px solid #3a3f66;
+  }
+  .hidden{display:none !important;}
+
+  .quiz-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:12px;
+    font-size:0.85rem;
+    color:var(--muted);
+  }
+  .progress-bar{
+    height:6px;
+    background:#2a2f52;
+    border-radius:4px;
+    overflow:hidden;
+    margin-bottom:20px;
+  }
+  .progress-fill{
+    height:100%;
+    background:linear-gradient(90deg,var(--accent),var(--accent2));
+    transition:width .3s;
+  }
+  .question-title{
+    font-size:1.15rem;
+    text-align:center;
+    margin-bottom:6px;
+  }
+  .question-sub{
+    text-align:center;
+    color:var(--muted);
+    font-size:0.85rem;
+    margin-bottom:20px;
+  }
+  .degree-block{
+    background:var(--card2);
+    border-radius:10px;
+    padding:10px;
+    margin-bottom:10px;
+  }
+  .degree-label{
+    font-weight:700;
+    font-size:0.85rem;
+    margin-bottom:6px;
+    color:var(--accent);
+  }
+  .options{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:6px;
+  }
+  @media(min-width:480px){
+    .options{grid-template-columns:repeat(6,1fr);}
+  }
+  .opt-btn{
+    background:#2a2f52;
+    border:2px solid transparent;
+    color:var(--text);
+    border-radius:8px;
+    padding:6px 4px;
+    font-size:0.85rem;
+    cursor:pointer;
+    text-align:center;
+    transition:all .15s;
+  }
+  .opt-btn:hover{border-color:var(--accent2);}
+  .opt-btn.selected{border-color:var(--accent2); background:#33397a;}
+  .opt-btn.correct{border-color:var(--accent); background:#1e4d3a; color:#c9ffe6;}
+  .opt-btn.wrong{border-color:var(--danger); background:#4d1e1e; color:#ffd6d6;}
+  .opt-btn:disabled{cursor:default;}
+
+  .check-row{
+    display:flex;
+    gap:10px;
+    margin-top:8px;
+  }
+  .feedback{
+    text-align:center;
+    font-weight:600;
+    margin:14px 0;
+    min-height:1.4em;
+  }
+  .feedback.ok{color:var(--accent);}
+  .feedback.bad{color:var(--danger);}
+
+  .score-screen{
+    text-align:center;
+  }
+  .score-big{
+    font-size:2.6rem;
+    font-weight:800;
+    margin:14px 0;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>Treino de Ouvido &amp; Teoria</h1>
+  <div class="subtitle">Campo harmônico (1-4-5) e Notas relativas</div>
+
+  <!-- CONFIG SCREEN -->
+  <div class="panel" id="configPanel">
+    <div class="info-box">
+      <p><strong>Campo harmônico (graus 1, 4 e 5):</strong> em qualquer escala maior, os graus 1 (tônica), 4 e 5 formam os três acordes principais da tonalidade (os intervalos são: 1 = raiz, 4 = uma 4ª justa acima, 5 = uma 5ª justa acima). Ex.: em C maior, 1=C, 4=F, 5=G.</p>
+      <p><strong>Relativos (maior ↔ menor):</strong> toda escala maior tem uma escala menor "relativa" que usa as mesmas notas, começando 3 semitons abaixo da tônica maior (ou na 6ª nota da maior). Ex.: relativo de C maior é A menor.</p>
+    </div>
+    <div class="config-grid">
+      <div class="field">
+        <label for="modeSelect">O que vamos praticar?</label>
+        <select id="modeSelect">
+          <option value="campo">🎯 Campo harmônico — achar as notas 1, 4 e 5</option>
+          <option value="grau">🔢 Graus — dada a nota, achar o grau (1 a 7)</option>
+          <option value="relativa">🔄 Relativos — achar a menor relativa</option>
+        </select>
+        <div class="hint" id="modeHint"></div>
+      </div>
+      <div class="field" id="scaleTypeField">
+        <label for="scaleTypeSelect">Tipo de escala</label>
+        <select id="scaleTypeSelect">
+          <optgroup label="Fácil">
+            <option value="major">Maior (jônico)</option>
+            <option value="natural_minor">Menor natural (eólio)</option>
+          </optgroup>
+          <optgroup label="Médio">
+            <option value="harmonic_minor">Menor harmônica</option>
+            <option value="melodic_minor">Menor melódica</option>
+          </optgroup>
+          <optgroup label="Difícil (modos gregos)">
+            <option value="dorian">Dórico</option>
+            <option value="phrygian">Frígio</option>
+            <option value="lydian">Lídio</option>
+            <option value="mixolydian">Mixolídio</option>
+            <option value="locrian">Lócrio</option>
+          </optgroup>
+        </select>
+        <div class="hint" id="scaleTypeHint"></div>
+      </div>
+      <div class="field">
+        <label for="orderSelect">Como as perguntas aparecem?</label>
+        <select id="orderSelect">
+          <option value="sequencial">➡️ Em ordem (C, D, E, F...)</option>
+          <option value="aleatoria">🔀 Embaralhadas</option>
+          <option value="infinita">♾️ Sem parar, até eu encerrar</option>
+        </select>
+        <div class="hint" id="orderHint"></div>
+      </div>
+      <div class="field">
+        <label for="rootTypeSelect">Quais notas entram no treino?</label>
+        <select id="rootTypeSelect">
+          <option value="natural">Só naturais (C,D,E,F,G,A,B) — 7 perguntas</option>
+          <option value="cromatico">Todas, com ♯ (sustenido) — 12 perguntas</option>
+          <option value="cromatico_bemol">Todas, com ♭ (bemol) — 12 perguntas</option>
+          <option value="mixed">Todas juntas (naturais, ♯ e ♭) — 12 perguntas</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="numOptSelect">Quantas opções de resposta?</label>
+        <select id="numOptSelect">
+          <option value="4">4 opções (mais fácil)</option>
+          <option value="6">6 opções (mais difícil)</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn btn-primary" id="startBtn">▶ Começar treino</button>
+  </div>
+
+  <!-- QUIZ SCREEN -->
+  <div class="panel hidden" id="quizPanel">
+    <div class="quiz-header">
+      <span id="quizModeLabel"></span>
+      <span id="quizProgressLabel"></span>
+    </div>
+    <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
+
+    <div class="question-title" id="questionTitle"></div>
+    <div class="question-sub" id="questionSub"></div>
+
+    <div id="questionBody"></div>
+
+    <div class="feedback" id="feedback"></div>
+
+    <div class="check-row">
+      <button class="btn btn-secondary" id="quitBtn" style="flex:1;">Encerrar</button>
+      <button class="btn btn-primary" id="checkBtn" style="flex:2;">Verificar</button>
+    </div>
+  </div>
+
+  <!-- SCORE SCREEN -->
+  <div class="panel score-screen hidden" id="scorePanel">
+    <div class="question-title">Resultado</div>
+    <div class="score-big" id="scoreBig"></div>
+    <div class="question-sub" id="scoreSub"></div>
+    <button class="btn btn-primary" id="restartBtn">Treinar de novo</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var CHROMATIC_SHARP = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+  var CHROMATIC_FLAT  = ["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"];
+  var NATURAL_IDX = [0,2,4,5,7,9,11]; // C D E F G A B indices in chromatic
+
+  var SCALES = {
+    major:           {label:"Maior (jônico)",        steps:[0,2,4,5,7,9,11]},
+    natural_minor:   {label:"Menor natural (eólio)",  steps:[0,2,3,5,7,8,10]},
+    harmonic_minor:  {label:"Menor harmônica",        steps:[0,2,3,5,7,8,11]},
+    melodic_minor:   {label:"Menor melódica",         steps:[0,2,3,5,7,9,11]},
+    dorian:          {label:"Dórico",                 steps:[0,2,3,5,7,9,10]},
+    phrygian:        {label:"Frígio",                 steps:[0,1,3,5,7,8,10]},
+    lydian:          {label:"Lídio",                  steps:[0,2,4,6,7,9,11]},
+    mixolydian:      {label:"Mixolídio",               steps:[0,2,4,5,7,9,10]},
+    locrian:         {label:"Lócrio",                 steps:[0,1,3,5,6,8,10]}
+  };
+
+  var accidentalMode = "sharp"; // "sharp" | "flat" (set on startQuiz)
+
+  function noteName(idx){
+    var i = ((idx % 12) + 12) % 12;
+    if(accidentalMode === "mixed"){
+      if(CHROMATIC_SHARP[i] === CHROMATIC_FLAT[i]) return CHROMATIC_SHARP[i];
+      return CHROMATIC_SHARP[i] + "/" + CHROMATIC_FLAT[i];
+    }
+    return accidentalMode === "flat" ? CHROMATIC_FLAT[i] : CHROMATIC_SHARP[i];
+  }
+
+  function shuffle(arr){
+    var a = arr.slice();
+    for(var i=a.length-1;i>0;i--){
+      var j = Math.floor(Math.random()*(i+1));
+      var t=a[i]; a[i]=a[j]; a[j]=t;
+    }
+    return a;
+  }
+
+  function pickDistractors(correctIdx, count, excludeIdx){
+    excludeIdx = excludeIdx || [];
+    var pool = [];
+    for(var i=0;i<12;i++){
+      if(i===correctIdx) continue;
+      if(excludeIdx.indexOf(i) !== -1) continue;
+      pool.push(i);
+    }
+    pool = shuffle(pool);
+    return pool.slice(0, count);
+  }
+
+  function pickDegreeDistractors(correctDeg, count){
+    var pool = [1,2,3,4,5,6,7].filter(function(d){ return d !== correctDeg; });
+    pool = shuffle(pool);
+    return pool.slice(0, count);
+  }
+
+  // ---- Build question sets ----
+
+  function buildCampoQuestions(rootIdxList, numOptions, scaleKey){
+    var steps = SCALES[scaleKey].steps;
+    var scaleLabel = SCALES[scaleKey].label;
+    // For each root, one question with 3 sub-answers: grau 1, 4, 5
+    return rootIdxList.map(function(rootIdx){
+      var deg1 = (rootIdx + steps[0]) % 12;
+      var deg4 = (rootIdx + steps[3]) % 12;
+      var deg5 = (rootIdx + steps[4]) % 12;
+      var degrees = [
+        {label:"Grau 1 — Tônica (a raiz da escala)", correct:deg1},
+        {label:"Grau 4 — quarto grau da escala", correct:deg4},
+        {label:"Grau 5 — quinto grau da escala", correct:deg5}
+      ];
+      degrees.forEach(function(d){
+        var distractors = pickDistractors(d.correct, numOptions-1, [rootIdx]);
+        var opts = shuffle([d.correct].concat(distractors));
+        d.options = opts;
+      });
+      return {
+        type:"campo",
+        rootIdx: rootIdx,
+        title: noteName(rootIdx) + " — " + scaleLabel,
+        sub: "Selecione a nota correspondente a cada grau",
+        degrees: degrees
+      };
+    });
+  }
+
+  function buildGrauQuestions(rootIdxList, numOptions, scaleKey){
+    var steps = SCALES[scaleKey].steps;
+    var scaleLabel = SCALES[scaleKey].label;
+    // For each root, show all 7 scale notes (shuffled) and ask which degree each one is
+    return rootIdxList.map(function(rootIdx){
+      var items = shuffle(steps.map(function(step, i){
+        return {noteIdx: (rootIdx + step) % 12, correctDeg: i+1};
+      }));
+      var degrees = items.map(function(it){
+        var distractors = pickDegreeDistractors(it.correctDeg, numOptions-1);
+        var opts = shuffle([it.correctDeg].concat(distractors));
+        return {
+          label: "Nota " + noteName(it.noteIdx) + " → qual grau?",
+          correct: it.correctDeg,
+          options: opts
+        };
+      });
+      return {
+        type:"grau",
+        rootIdx: rootIdx,
+        title: noteName(rootIdx) + " — " + scaleLabel,
+        sub: "Diga qual grau (1 a 7) cada nota representa nessa escala",
+        degrees: degrees
+      };
+    });
+  }
+
+  function buildRelativaQuestions(rootIdxList, numOptions){
+    return rootIdxList.map(function(rootIdx){
+      var relMinorIdx = (rootIdx + 9) % 12; // relative minor of major key
+      var distractors = pickDistractors(relMinorIdx, numOptions-1, [rootIdx]);
+      var opts = shuffle([relMinorIdx].concat(distractors));
+      return {
+        type:"relativa",
+        rootIdx: rootIdx,
+        title: "Qual o relativo (menor) de " + noteName(rootIdx) + "?",
+        sub: "Escolha a nota correta",
+        degrees: [
+          {label:"Relativo menor", correct: relMinorIdx, options: opts}
+        ]
+      };
+    });
+  }
+
+  // ---- App state ----
+  var state = {
+    questions: [],
+    current: 0,
+    score: 0,
+    total: 0,
+    mode: "campo",
+    answers: {} // degreeIndex -> selected idx (per question, reset each question)
+  };
+
+  var configPanel = document.getElementById("configPanel");
+  var quizPanel = document.getElementById("quizPanel");
+  var scorePanel = document.getElementById("scorePanel");
+
+  var startBtn = document.getElementById("startBtn");
+  var checkBtn = document.getElementById("checkBtn");
+  var quitBtn = document.getElementById("quitBtn");
+  var restartBtn = document.getElementById("restartBtn");
+
+  var modeSelect = document.getElementById("modeSelect");
+  var orderSelect = document.getElementById("orderSelect");
+  var rootTypeSelect = document.getElementById("rootTypeSelect");
+  var numOptSelect = document.getElementById("numOptSelect");
+  var scaleTypeSelect = document.getElementById("scaleTypeSelect");
+  var scaleTypeField = document.getElementById("scaleTypeField");
+  var scaleTypeHint = document.getElementById("scaleTypeHint");
+
+  var quizModeLabel = document.getElementById("quizModeLabel");
+  var quizProgressLabel = document.getElementById("quizProgressLabel");
+  var progressFill = document.getElementById("progressFill");
+  var questionTitle = document.getElementById("questionTitle");
+  var questionSub = document.getElementById("questionSub");
+  var questionBody = document.getElementById("questionBody");
+  var feedback = document.getElementById("feedback");
+
+  var scoreBig = document.getElementById("scoreBig");
+  var scoreSub = document.getElementById("scoreSub");
+
+  var answered = false; // whether current question has been checked
+
+  var modeHint = document.getElementById("modeHint");
+  var orderHint = document.getElementById("orderHint");
+
+  var MODE_HINTS = {
+    campo: "Você verá uma tonalidade (ex.: escala de C) e escolhe qual nota é o grau 1, qual é o 4 e qual é o 5.",
+    grau: "Você verá uma tonalidade e as 7 notas dela embaralhadas — escolhe o grau (1 a 7) de cada uma (o inverso do exercício anterior).",
+    relativa: "Você verá uma nota maior e escolhe qual é a menor relativa correspondente (mesmas notas, outra tônica)."
+  };
+  var ORDER_HINTS = {
+    sequencial: "As tonalidades aparecem sempre na mesma ordem — bom para aprender pela primeira vez.",
+    aleatoria: "As tonalidades aparecem em ordem sortida a cada treino — bom para testar memorização.",
+    infinita: "O treino continua gerando perguntas sem fim, até você clicar em \"Encerrar\"."
+  };
+
+  var SCALE_TYPE_HINTS = {
+    major: "Fácil — a escala mais comum, base de tudo.",
+    natural_minor: "Fácil — relativa da maior, soma triste/melancólica.",
+    harmonic_minor: "Médio — menor natural com o 7º grau elevado.",
+    melodic_minor: "Médio — menor natural com 6º e 7º graus elevados.",
+    dorian: "Difícil — modo grego, menor com 6º grau maior.",
+    phrygian: "Difícil — modo grego, menor com 2º grau abaixado.",
+    lydian: "Difícil — modo grego, maior com 4º grau elevado.",
+    mixolydian: "Difícil — modo grego, maior com 7º grau abaixado.",
+    locrian: "Difícil — modo grego mais dissonante, 2º e 5º graus abaixados."
+  };
+
+  function updateHints(){
+    modeHint.textContent = MODE_HINTS[modeSelect.value] || "";
+    orderHint.textContent = ORDER_HINTS[orderSelect.value] || "";
+    if(scaleTypeHint) scaleTypeHint.textContent = SCALE_TYPE_HINTS[scaleTypeSelect.value] || "";
+    if(scaleTypeField) scaleTypeField.classList.toggle("hidden", modeSelect.value === "relativa");
+  }
+
+  function buildOneQuestion(rootIdx, mode, numOptions, scaleKey){
+    if(mode === "campo") return buildCampoQuestions([rootIdx], numOptions, scaleKey)[0];
+    if(mode === "grau") return buildGrauQuestions([rootIdx], numOptions, scaleKey)[0];
+    return buildRelativaQuestions([rootIdx], numOptions)[0];
+  }
+
+  function nextRootIdx(){
+    if(state.cyclePos >= state.rootIdxList.length){
+      state.cyclePos = 0;
+      if(state.order === "aleatoria"){
+        state.rootIdxList = shuffle(state.rootIdxList);
+      }
+    }
+    return state.rootIdxList[state.cyclePos++];
+  }
+
+  function ensureQuestionAt(index){
+    while(state.questions.length <= index){
+      var rootIdx = nextRootIdx();
+      state.questions.push(buildOneQuestion(rootIdx, state.mode, state.numOptions, state.scaleKey));
+    }
+  }
+
+  function startQuiz(){
+    var mode = modeSelect.value;
+    var order = orderSelect.value;
+    var rootType = rootTypeSelect.value;
+    var numOptions = parseInt(numOptSelect.value, 10);
+    var scaleKey = scaleTypeSelect.value;
+
+    accidentalMode = rootType === "cromatico_bemol" ? "flat" : rootType === "mixed" ? "mixed" : "sharp";
+
+    var baseRootIdxList = rootType === "natural" ? NATURAL_IDX.slice() : [0,1,2,3,4,5,6,7,8,9,10,11];
+
+    var infinite = order === "infinita";
+    if(order === "aleatoria" || infinite){
+      baseRootIdxList = shuffle(baseRootIdxList);
+    }
+
+    state.mode = mode;
+    state.order = order;
+    state.numOptions = numOptions;
+    state.scaleKey = scaleKey;
+    state.rootIdxList = baseRootIdxList;
+    state.cyclePos = 0;
+    state.infinite = infinite;
+    state.current = 0;
+    state.score = 0;
+    state.answeredCount = 0;
+    state.questions = [];
+
+    if(infinite){
+      state.total = null;
+      ensureQuestionAt(0);
+    } else {
+      var questions = mode === "campo"
+        ? buildCampoQuestions(baseRootIdxList, numOptions, scaleKey)
+        : mode === "grau"
+          ? buildGrauQuestions(baseRootIdxList, numOptions, scaleKey)
+          : buildRelativaQuestions(baseRootIdxList, numOptions);
+      state.questions = questions;
+      state.total = questions.length;
+    }
+
+    configPanel.classList.add("hidden");
+    scorePanel.classList.add("hidden");
+    quizPanel.classList.remove("hidden");
+
+    document.getElementById("progressBar").classList.toggle("hidden", infinite);
+
+    quizModeLabel.textContent = mode === "campo" ? "Campo harmônico (1-4-5)" : mode === "grau" ? "Graus (1-4-5)" : "Notas relativas";
+
+    renderQuestion();
+  }
+
+  function renderQuestion(){
+    answered = false;
+    feedback.textContent = "";
+    feedback.className = "feedback";
+    checkBtn.textContent = "Verificar";
+    checkBtn.disabled = false;
+
+    if(state.infinite) ensureQuestionAt(state.current);
+    var q = state.questions[state.current];
+    questionTitle.textContent = q.title;
+    questionSub.textContent = q.sub;
+    if(state.infinite){
+      quizProgressLabel.textContent = "Pergunta " + (state.current+1) + " · Acertos: " + state.score + "/" + state.answeredCount;
+    } else {
+      quizProgressLabel.textContent = (state.current+1) + " / " + state.total;
+      progressFill.style.width = ((state.current) / state.total * 100) + "%";
+    }
+
+    questionBody.innerHTML = "";
+
+    q.degrees.forEach(function(deg, degIdx){
+      var block = document.createElement("div");
+      block.className = "degree-block";
+
+      var label = document.createElement("div");
+      label.className = "degree-label";
+      label.textContent = deg.label;
+      block.appendChild(label);
+
+      var optsWrap = document.createElement("div");
+      optsWrap.className = "options";
+
+      deg.options.forEach(function(optIdx){
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "opt-btn";
+        b.textContent = q.type === "grau" ? String(optIdx) : noteName(optIdx);
+        b.dataset.degIdx = degIdx;
+        b.dataset.optIdx = optIdx;
+        b.addEventListener("click", function(){
+          if(answered) return;
+          var siblings = optsWrap.querySelectorAll(".opt-btn");
+          siblings.forEach(function(s){ s.classList.remove("selected"); });
+          b.classList.add("selected");
+          deg.selected = optIdx;
+        });
+        optsWrap.appendChild(b);
+      });
+
+      block.appendChild(optsWrap);
+      questionBody.appendChild(block);
+    });
+  }
+
+  function checkAnswer(){
+    var q = state.questions[state.current];
+
+    if(answered){
+      // move to next question
+      state.current++;
+      if(!state.infinite && state.current >= state.total){
+        showScore();
+      } else {
+        renderQuestion();
+      }
+      return;
+    }
+
+    // validate all degrees answered
+    var allAnswered = q.degrees.every(function(d){ return d.selected !== undefined; });
+    if(!allAnswered){
+      feedback.textContent = "Selecione uma opção para cada campo antes de verificar.";
+      feedback.className = "feedback bad";
+      return;
+    }
+
+    var correctCount = 0;
+    var blocks = questionBody.querySelectorAll(".degree-block");
+    q.degrees.forEach(function(deg, degIdx){
+      var block = blocks[degIdx];
+      var btns = block.querySelectorAll(".opt-btn");
+      btns.forEach(function(b){
+        b.disabled = true;
+        var optIdx = parseInt(b.dataset.optIdx, 10);
+        if(optIdx === deg.correct){
+          b.classList.add("correct");
+        } else if(optIdx === deg.selected && deg.selected !== deg.correct){
+          b.classList.add("wrong");
+        }
+      });
+      if(deg.selected === deg.correct) correctCount++;
+    });
+
+    var allCorrect = correctCount === q.degrees.length;
+    state.answeredCount++;
+    if(allCorrect){
+      state.score++;
+      feedback.textContent = "Correto!";
+      feedback.className = "feedback ok";
+    } else {
+      feedback.textContent = "Acertos: " + correctCount + " de " + q.degrees.length + ". Veja as respostas corretas em verde.";
+      feedback.className = "feedback bad";
+    }
+
+    answered = true;
+    if(state.infinite){
+      checkBtn.textContent = "Próxima";
+      quizProgressLabel.textContent = "Pergunta " + (state.current+1) + " · Acertos: " + state.score + "/" + state.answeredCount;
+    } else {
+      checkBtn.textContent = (state.current+1 < state.total) ? "Próxima" : "Ver resultado";
+      progressFill.style.width = ((state.current+1) / state.total * 100) + "%";
+    }
+  }
+
+  function showScore(){
+    quizPanel.classList.add("hidden");
+    scorePanel.classList.remove("hidden");
+    var totalForPct = state.infinite ? state.answeredCount : state.total;
+    var pct = totalForPct > 0 ? Math.round((state.score/totalForPct)*100) : 0;
+    scoreBig.textContent = state.score + " / " + totalForPct;
+    scoreSub.textContent = pct + "% de acerto. " + (pct===100 ? "Excelente!" : pct>=70 ? "Muito bom!" : "Continue praticando.");
+  }
+
+  function quitQuiz(){
+    showScore();
+  }
+
+  modeSelect.addEventListener("change", updateHints);
+  orderSelect.addEventListener("change", updateHints);
+  scaleTypeSelect.addEventListener("change", updateHints);
+  updateHints();
+
+  startBtn.addEventListener("click", startQuiz);
+  checkBtn.addEventListener("click", checkAnswer);
+  quitBtn.addEventListener("click", quitQuiz);
+  restartBtn.addEventListener("click", function(){
+    scorePanel.classList.add("hidden");
+    configPanel.classList.remove("hidden");
+  });
+
+})();
+</script>
+</body>
+</html>
