@@ -211,6 +211,124 @@
     background-clip:text;
     color:transparent;
   }
+
+  .btn-help{
+    background:var(--card2);
+    color:var(--accent2);
+    border:1px solid #3a3f66;
+    width:100%;
+    margin-bottom:16px;
+  }
+  .help-section{
+    margin-bottom:28px;
+  }
+  .help-section:last-child{margin-bottom:0;}
+  .help-section h2{
+    font-size:1.05rem;
+    margin:0 0 4px 0;
+    color:var(--accent);
+  }
+  .help-purpose{
+    font-size:0.85rem;
+    color:var(--muted);
+    margin:0 0 10px 0;
+    line-height:1.5;
+  }
+  .help-purpose strong{color:var(--text);}
+  .help-visual{
+    background:var(--card2);
+    border-radius:12px;
+    padding:14px;
+    margin-bottom:10px;
+  }
+  .deg-row{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+  .deg-box{
+    flex:1 1 40px;
+    min-width:40px;
+    text-align:center;
+    background:#2a2f52;
+    border-radius:8px;
+    padding:8px 4px;
+    border:2px solid transparent;
+  }
+  .deg-box .note{font-weight:700; font-size:0.95rem;}
+  .deg-box .deg{font-size:0.7rem; color:var(--muted); margin-top:2px;}
+  .deg-box.hl-1{border-color:var(--accent); background:#1e4d3a;}
+  .deg-box.hl-4{border-color:var(--accent2); background:#1e3a5a;}
+  .deg-box.hl-5{border-color:#f9d976; background:#5a4a1e;}
+  .help-explain{
+    font-size:0.8rem;
+    color:var(--muted);
+    text-align:center;
+    margin-top:8px;
+  }
+  .rel-wrap{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+  .rel-card{
+    text-align:center;
+  }
+  .rel-card .big{
+    font-size:1.6rem;
+    font-weight:800;
+  }
+  .rel-card .small{
+    font-size:0.75rem;
+    color:var(--muted);
+  }
+  .rel-arrow{
+    font-size:1.4rem;
+    color:var(--accent2);
+  }
+  .flow-wrap{
+    display:flex;
+    align-items:stretch;
+    justify-content:center;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .flow-col{
+    background:#242a4d;
+    border-radius:10px;
+    padding:10px 12px;
+    text-align:center;
+    min-width:88px;
+  }
+  .flow-col .flow-title{
+    font-size:0.72rem;
+    color:var(--muted);
+    margin-bottom:6px;
+    text-transform:uppercase;
+    letter-spacing:.03em;
+  }
+  .flow-col .flow-chords{
+    font-weight:700;
+    font-size:0.95rem;
+    line-height:1.6;
+  }
+  .flow-arrow{
+    align-self:center;
+    font-size:1.3rem;
+    color:var(--accent2);
+  }
+  .flow-example{
+    margin-top:12px;
+    text-align:center;
+    font-size:0.85rem;
+    color:var(--text);
+    background:#1a1f35;
+    border-radius:8px;
+    padding:8px;
+  }
 </style>
 </head>
 <body>
@@ -220,6 +338,7 @@
 
   <!-- CONFIG SCREEN -->
   <div class="panel" id="configPanel">
+    <button class="btn btn-help" id="helpBtn">❓ Como funciona cada exercício (com exemplos)</button>
     <div class="info-box">
       <p><strong>Campo harmônico (graus 1, 4 e 5):</strong> em qualquer escala maior, os graus 1 (tônica), 4 e 5 formam os três acordes principais da tonalidade (os intervalos são: 1 = raiz, 4 = uma 4ª justa acima, 5 = uma 5ª justa acima). Ex.: em C maior, 1=C, 4=F, 5=G.</p>
       <p><strong>Relativos (maior ↔ menor):</strong> toda escala maior tem uma escala menor "relativa" que usa as mesmas notas, começando 3 semitons abaixo da tônica maior (ou na 6ª nota da maior). Ex.: relativo de C maior é A menor.</p>
@@ -313,6 +432,84 @@
     <div class="score-big" id="scoreBig"></div>
     <div class="question-sub" id="scoreSub"></div>
     <button class="btn btn-primary" id="restartBtn">Treinar de novo</button>
+  </div>
+
+  <!-- HELP SCREEN -->
+  <div class="panel hidden" id="helpPanel">
+    <button class="btn btn-secondary" id="backFromHelpBtn" style="margin-bottom:16px;">← Voltar</button>
+
+    <div class="help-section">
+      <h2>🎯 Grau → nota (Campo harmônico 1-4-5)</h2>
+      <p class="help-purpose"><strong>Pra que serve:</strong> os graus 1, 4 e 5 formam os 3 acordes principais de qualquer tom — a base de milhares de músicas (ex.: C-F-G). Treinar isso deixa você rápido pra tocar "de ouvido" ou transportar uma música pra outro tom.</p>
+      <div class="help-visual">
+        <div class="deg-row">
+          <div class="deg-box hl-1"><div class="note">C</div><div class="deg">1</div></div>
+          <div class="deg-box"><div class="note">D</div><div class="deg">2</div></div>
+          <div class="deg-box"><div class="note">E</div><div class="deg">3</div></div>
+          <div class="deg-box hl-4"><div class="note">F</div><div class="deg">4</div></div>
+          <div class="deg-box hl-5"><div class="note">G</div><div class="deg">5</div></div>
+          <div class="deg-box"><div class="note">A</div><div class="deg">6</div></div>
+          <div class="deg-box"><div class="note">B</div><div class="deg">7</div></div>
+        </div>
+        <div class="help-explain">Exemplo em C maior: grau 1=C (verde), grau 4=F (azul), grau 5=G (amarelo). O exercício pede pra você achar essas 3 notas em qualquer tom.</div>
+      </div>
+    </div>
+
+    <div class="help-section">
+      <h2>🔢 Graus (nota → grau)</h2>
+      <p class="help-purpose"><strong>Pra que serve:</strong> é o caminho inverso do anterior — dada uma nota da escala, dizer que grau ela é. Ajuda a "ler" uma melodia ou cifra e entender a função de cada nota na hora, sem precisar contar do zero toda vez.</p>
+      <div class="help-visual">
+        <div class="deg-row">
+          <div class="deg-box"><div class="note">F</div><div class="deg">?</div></div>
+          <div class="deg-box"><div class="note">C</div><div class="deg">?</div></div>
+          <div class="deg-box"><div class="note">A</div><div class="deg">?</div></div>
+        </div>
+        <div class="help-explain">Em C maior: F é grau 4, C é grau 1, A é grau 6. O exercício embaralha as 7 notas e pergunta o grau de cada uma.</div>
+      </div>
+    </div>
+
+    <div class="help-section">
+      <h2>🔄 Relativos (maior ↔ menor)</h2>
+      <p class="help-purpose"><strong>Pra que serve:</strong> toda escala maior tem uma "gêmea" menor com as mesmas notas, só muda a tônica (o centro tonal). Saber isso ajuda a improvisar, compor e entender por que uma música "maior" às vezes soa "menor" em certos trechos.</p>
+      <div class="help-visual">
+        <div class="rel-wrap">
+          <div class="rel-card"><div class="big">C maior</div><div class="small">C D E F G A B</div></div>
+          <div class="rel-arrow">⇄</div>
+          <div class="rel-card"><div class="big">A menor</div><div class="small">A B C D E F G</div></div>
+        </div>
+        <div class="help-explain">Mesmas 7 notas, tônicas diferentes. A relativa menor começa 3 semitons abaixo da tônica maior (ou na 6ª nota dela).</div>
+      </div>
+    </div>
+
+    <div class="help-section">
+      <h2>🔁 Fluxo de acordes (harmonia funcional)</h2>
+      <p class="help-purpose"><strong>Pra que serve:</strong> explica por que certas sequências de acordes "soam certo" e outras soam estranhas. Entender isso ajuda a compor progressões, prever pra onde uma música vai e tocar de ouvido acompanhando qualquer música tonal.</p>
+      <div class="help-visual">
+        <div class="flow-wrap">
+          <div class="flow-col">
+            <div class="flow-title">Tônica</div>
+            <div class="flow-chords">I · iii · vi</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-col">
+            <div class="flow-title">Subdominante</div>
+            <div class="flow-chords">ii · IV</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-col">
+            <div class="flow-title">Dominante</div>
+            <div class="flow-chords">V · vii°</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-col">
+            <div class="flow-title">Tônica</div>
+            <div class="flow-chords">I</div>
+          </div>
+        </div>
+        <div class="flow-example">Exemplo em C maior: <strong>C (I) → Am (vi) → F (IV) → G (V) → C (I)</strong><br>Tônica → Tônica → Subdominante → Dominante → Tônica</div>
+        <div class="help-explain">O exercício mostra um grau (ex.: ii) e pede pra onde ele tende a resolver (ex.: V), seguindo esse fluxo.</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -493,6 +690,9 @@
   var configPanel = document.getElementById("configPanel");
   var quizPanel = document.getElementById("quizPanel");
   var scorePanel = document.getElementById("scorePanel");
+  var helpPanel = document.getElementById("helpPanel");
+  var helpBtn = document.getElementById("helpBtn");
+  var backFromHelpBtn = document.getElementById("backFromHelpBtn");
 
   var startBtn = document.getElementById("startBtn");
   var checkBtn = document.getElementById("checkBtn");
@@ -771,6 +971,15 @@
   quitBtn.addEventListener("click", quitQuiz);
   restartBtn.addEventListener("click", function(){
     scorePanel.classList.add("hidden");
+    configPanel.classList.remove("hidden");
+  });
+
+  helpBtn.addEventListener("click", function(){
+    configPanel.classList.add("hidden");
+    helpPanel.classList.remove("hidden");
+  });
+  backFromHelpBtn.addEventListener("click", function(){
+    helpPanel.classList.add("hidden");
     configPanel.classList.remove("hidden");
   });
 
