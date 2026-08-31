@@ -223,6 +223,7 @@
     <div class="info-box">
       <p><strong>Campo harmônico (graus 1, 4 e 5):</strong> em qualquer escala maior, os graus 1 (tônica), 4 e 5 formam os três acordes principais da tonalidade (os intervalos são: 1 = raiz, 4 = uma 4ª justa acima, 5 = uma 5ª justa acima). Ex.: em C maior, 1=C, 4=F, 5=G.</p>
       <p><strong>Relativos (maior ↔ menor):</strong> toda escala maior tem uma escala menor "relativa" que usa as mesmas notas, começando 3 semitons abaixo da tônica maior (ou na 6ª nota da maior). Ex.: relativo de C maior é A menor.</p>
+      <p><strong>Fluxo de acordes (harmonia funcional):</strong> os 7 graus se agrupam em 3 funções — Tônica (I, iii, vi), Subdominante (ii, IV) e Dominante (V, vii°). O movimento típico é Tônica → Subdominante → Dominante → Tônica. Ex.: ii tende a V, V tende a I (ou vi, "cadência de engano"), vi tende a IV.</p>
     </div>
     <div class="config-grid">
       <div class="field">
@@ -231,6 +232,7 @@
           <option value="campo">🎯 Grau → nota — achar as notas 1, 4 e 5 (campo harmônico em maior/menor)</option>
           <option value="grau">🔢 Graus — dada a nota, achar o grau (1 a 7)</option>
           <option value="relativa">🔄 Relativos — achar a menor relativa</option>
+          <option value="fluxo">🔁 Fluxo de acordes — pra qual grau cada acorde tende a resolver</option>
         </select>
         <div class="hint" id="modeHint"></div>
       </div>
@@ -372,6 +374,17 @@
     return pool.slice(0, count);
   }
 
+  // Harmonia funcional (comum-prática): Tônica(I,iii,vi) -> Subdominante(ii,IV) -> Dominante(V,vii°) -> Tônica
+  var ROMAN = ["I","ii","iii","IV","V","vi","vii°"];
+  var DEGREE_QUALITY = ["maior","menor","menor","maior","maior","menor","diminuto"];
+  var NEXT_DEGREE = {2:5, 3:6, 4:5, 5:1, 6:4, 7:1}; // grau 1 (tônica) fica de fora: pode ir pra qualquer grau
+
+  function pickFluxoDistractors(correctDeg, currentDeg, count){
+    var pool = [1,2,3,4,5,6,7].filter(function(d){ return d !== correctDeg && d !== currentDeg; });
+    pool = shuffle(pool);
+    return pool.slice(0, count);
+  }
+
   // ---- Build question sets ----
 
   function buildCampoQuestions(rootIdxList, numOptions, scaleKey){
@@ -446,6 +459,27 @@
     });
   }
 
+  function buildFluxoQuestions(rootIdxList, numOptions){
+    var steps = SCALES.major.steps;
+    var degChoices = [2,3,4,5,6,7]; // grau 1 fica fora (tônica pode ir pra qualquer grau)
+    return rootIdxList.map(function(rootIdx){
+      var currentDeg = degChoices[Math.floor(Math.random()*degChoices.length)];
+      var correctDeg = NEXT_DEGREE[currentDeg];
+      var chordRoot = (rootIdx + steps[currentDeg-1]) % 12;
+      var distractors = pickFluxoDistractors(correctDeg, currentDeg, numOptions-1);
+      var opts = shuffle([correctDeg].concat(distractors));
+      return {
+        type:"fluxo",
+        rootIdx: rootIdx,
+        title: "Tom de " + noteName(rootIdx) + " maior — grau " + ROMAN[currentDeg-1] + " (" + noteName(chordRoot) + " " + DEGREE_QUALITY[currentDeg-1] + ")",
+        sub: "Para qual grau essa harmonia tende a resolver (progressão mais comum)?",
+        degrees: [
+          {label:"Próximo grau", correct: correctDeg, options: opts}
+        ]
+      };
+    });
+  }
+
   // ---- App state ----
   var state = {
     questions: [],
@@ -492,7 +526,8 @@
   var MODE_HINTS = {
     campo: "Você verá uma tonalidade (ex.: escala de C) e escolhe qual nota é o grau 1, qual é o 4 e qual é o 5.",
     grau: "Você verá uma tonalidade e as 7 notas dela embaralhadas — escolhe o grau (1 a 7) de cada uma (o inverso do exercício anterior).",
-    relativa: "Você verá uma nota maior e escolhe qual é a menor relativa correspondente (mesmas notas, outra tônica)."
+    relativa: "Você verá uma nota maior e escolhe qual é a menor relativa correspondente (mesmas notas, outra tônica).",
+    fluxo: "Você verá um grau (ex.: ii) numa tonalidade maior e escolhe pra qual grau ele tende a resolver, seguindo a harmonia funcional (Tônica → Subdominante → Dominante → Tônica)."
   };
   var ORDER_HINTS = {
     sequencial: "As tonalidades aparecem sempre na mesma ordem — bom para aprender pela primeira vez.",
@@ -516,12 +551,13 @@
     modeHint.textContent = MODE_HINTS[modeSelect.value] || "";
     orderHint.textContent = ORDER_HINTS[orderSelect.value] || "";
     if(scaleTypeHint) scaleTypeHint.textContent = SCALE_TYPE_HINTS[scaleTypeSelect.value] || "";
-    if(scaleTypeField) scaleTypeField.classList.toggle("hidden", modeSelect.value === "relativa");
+    if(scaleTypeField) scaleTypeField.classList.toggle("hidden", modeSelect.value === "relativa" || modeSelect.value === "fluxo");
   }
 
   function buildOneQuestion(rootIdx, mode, numOptions, scaleKey){
     if(mode === "campo") return buildCampoQuestions([rootIdx], numOptions, scaleKey)[0];
     if(mode === "grau") return buildGrauQuestions([rootIdx], numOptions, scaleKey)[0];
+    if(mode === "fluxo") return buildFluxoQuestions([rootIdx], numOptions)[0];
     return buildRelativaQuestions([rootIdx], numOptions)[0];
   }
 
@@ -578,7 +614,9 @@
         ? buildCampoQuestions(baseRootIdxList, numOptions, scaleKey)
         : mode === "grau"
           ? buildGrauQuestions(baseRootIdxList, numOptions, scaleKey)
-          : buildRelativaQuestions(baseRootIdxList, numOptions);
+          : mode === "fluxo"
+            ? buildFluxoQuestions(baseRootIdxList, numOptions)
+            : buildRelativaQuestions(baseRootIdxList, numOptions);
       state.questions = questions;
       state.total = questions.length;
     }
@@ -591,7 +629,7 @@
 
     var isTonal = scaleKey === "major" || scaleKey === "natural_minor";
     var degreeExerciseLabel = isTonal ? "Campo harmônico (1-4-5)" : "Graus da escala (1-4-5)";
-    quizModeLabel.textContent = mode === "campo" ? degreeExerciseLabel : mode === "grau" ? "Graus da escala (1-7)" : "Notas relativas";
+    quizModeLabel.textContent = mode === "campo" ? degreeExerciseLabel : mode === "grau" ? "Graus da escala (1-7)" : mode === "fluxo" ? "Fluxo de acordes" : "Notas relativas";
 
     renderQuestion();
   }
@@ -632,7 +670,7 @@
         var b = document.createElement("button");
         b.type = "button";
         b.className = "opt-btn";
-        b.textContent = q.type === "grau" ? String(optIdx) : noteName(optIdx);
+        b.textContent = q.type === "grau" ? String(optIdx) : q.type === "fluxo" ? ROMAN[optIdx-1] : noteName(optIdx);
         b.dataset.degIdx = degIdx;
         b.dataset.optIdx = optIdx;
         b.addEventListener("click", function(){
